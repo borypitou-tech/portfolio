@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Borypitou — Contact</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #fafaf9;
+      --surface: #f5f5f4;
+      --surface2: #efefed;
+      --border: rgba(0,0,0,0.08);
+      --border-hover: rgba(0,0,0,0.14);
+      --gold: #b8860b;
+      --blue: #2563eb;
+      --text: #1f2937;
+      --text-2: #6b7280;
+      --text-3: #9ca3af;
+      --green: #059669;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg); color: var(--text);
+      overflow-x: hidden; min-height: 100vh;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    #canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.5rem 0; border-bottom: 1px solid var(--border);
+      background: rgba(250,250,249,0.85); backdrop-filter: blur(20px) saturate(1.5);
+    }
+
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .nav-logo {
+      font-family: 'Space Mono', monospace; font-size: 0.85rem;
+      letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; text-decoration: none;
+    }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+
+    .nav-links a {
+      font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+      font-weight: 500; color: var(--text-2); text-decoration: none;
+      transition: color 0.25s; position: relative; padding-bottom: 4px;
+    }
+
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 1px; background: var(--gold);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s var(--ease);
+    }
+
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+    .nav-links a.active { color: var(--text); }
+
+    .page-wrap {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      padding: 140px 2.5rem 100px;
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+
+    .section-label {
+      font-family: 'Space Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;
+    }
+
+    .section-label::after {
+      content: ''; width: 50px; height: 1px; background: var(--gold); opacity: 0.4;
+    }
+
+    /* MAIN GRID */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+      margin-bottom: 5rem;
+    }
+
+    /* LEFT */
+    .contact-headline {
+      font-size: clamp(3.5rem, 6vw, 6rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.9;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-headline .stroke {
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--text-3);
+    }
+
+    .contact-headline .gold-stroke {
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--gold);
+    }
+
+    .contact-sub {
+      color: var(--text-2); line-height: 1.9; font-size: 0.95rem;
+      max-width: 420px; margin-bottom: 3rem;
+    }
+
+    .availability {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      border: 1px solid var(--border);
+      padding: 0.75rem 1.25rem;
+      background: var(--surface);
+    }
+
+    .avail-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+
+    .avail-text {
+      font-family: 'Space Mono', monospace; font-size: 0.65rem;
+      color: var(--text-2); letter-spacing: 0.12em;
+    }
+
+    .avail-text strong { color: var(--green); font-weight: 400; }
+
+    /* RIGHT — CONTACT CARD */
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .card-header-label {
+      font-family: 'Space Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.2em; color: var(--text-3); text-transform: uppercase;
+    }
+
+    .card-header-num {
+      font-family: 'Space Mono', monospace; font-size: 0.62rem;
+      color: var(--text-3); letter-spacing: 0.1em;
+    }
+
+    .contact-link-item {
+      display: flex; align-items: center; gap: 1.5rem;
+      padding: 1.75rem 2rem;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none; color: var(--text);
+      transition: all 0.3s var(--ease);
+      position: relative; overflow: hidden;
+    }
+
+    .contact-link-item:last-child { border-bottom: none; }
+
+    .contact-link-item::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(200,169,110,0.04);
+      transform: translateX(-100%);
+      transition: transform 0.4s var(--ease);
+    }
+
+    .contact-link-item:hover::before { transform: translateX(0); }
+
+    .cl-icon {
+      width: 44px; height: 44px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative; z-index: 1;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .contact-link-item:hover .cl-icon {
+      border-color: var(--gold);
+      background: rgba(200,169,110,0.06);
+    }
+
+    .cl-icon svg { width: 18px; height: 18px; color: var(--text-2); transition: color 0.3s; }
+    .contact-link-item:hover .cl-icon svg { color: var(--gold); }
+
+    .cl-info { flex: 1; position: relative; z-index: 1; }
+
+    .cl-label {
+      font-size: 1rem; font-weight: 600; color: var(--text);
+      margin-bottom: 0.2rem; transition: color 0.3s;
+    }
+
+    .contact-link-item:hover .cl-label { color: var(--gold); }
+
+    .cl-handle {
+      font-family: 'Space Mono', monospace; font-size: 0.7rem;
+      color: var(--text-2); letter-spacing: 0.04em;
+    }
+
+    .cl-arrow {
+      font-size: 1rem; color: var(--text-3);
+      position: relative; z-index: 1;
+      transition: transform 0.3s var(--ease), color 0.3s;
+    }
+
+    .contact-link-item:hover .cl-arrow {
+      transform: translate(4px, -4px);
+      color: var(--gold);
+    }
+
+    /* BOTTOM STRIP */
+    .bottom-strip {
+      border: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .strip-item {
+      padding: 2rem 1.5rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .strip-item:last-child { border-right: none; }
+
+    .strip-label {
+      font-family: 'Space Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.2em; color: var(--text-3); text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .strip-value {
+      font-size: 0.9rem; font-weight: 600; color: var(--text-2);
+    }
+
+    /* FADE */
+    .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+    .fade-up.v { opacity: 1; transform: translateY(0); }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    footer span {
+      font-family: 'Space Mono', monospace; font-size: 0.62rem;
+      color: var(--text-3); letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 900px) {
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .bottom-strip { grid-template-columns: 1fr; }
+      .strip-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .strip-item:last-child { border-bottom: none; }
+    }
+
+    @media (max-width: 600px) {
+      .page-wrap { padding: 120px 1.5rem 80px; }
+      .contact-headline { font-size: 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">OP</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="tech.html">Tech</a></li>
+      <li><a href="crypto.html">Crypto</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="section-label">Contact</div>
+
+  <div class="contact-grid">
+    <div class="fade-up">
+      <h1 class="contact-headline">
+        <span class="stroke">Let's</span><br>
+        Build<br>
+        <span class="gold-stroke">Together.</span>
+      </h1>
+      <p class="contact-sub">
+        Open to collaboration, freelance projects, and conversations about tech, blockchain, and crypto. Based in Phnom Penh — working with clients worldwide.
+      </p>
+      <div class="availability">
+        <div class="avail-dot"></div>
+        <span class="avail-text"><strong>Available</strong> for new projects</span>
+      </div>
+    </div>
+
+    <div class="contact-card fade-up">
+      <div class="card-header">
+        <div class="card-header-label">Reach out directly</div>
+        <div class="card-header-num">01 / 01</div>
+      </div>
+      <a href="https://t.me/borypitououl" class="contact-link-item" target="_blank" rel="noopener noreferrer">
+        <div class="cl-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/>
+          </svg>
+        </div>
+        <div class="cl-info">
+          <div class="cl-label">Telegram</div>
+          <div class="cl-handle">@borypitououl</div>
+        </div>
+        <div class="cl-arrow">&#x2197;</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="bottom-strip fade-up">
+    <div class="strip-item">
+      <div class="strip-label">Location</div>
+      <div class="strip-value">Phnom Penh, Cambodia</div>
+    </div>
+    <div class="strip-item">
+      <div class="strip-label">Focus</div>
+      <div class="strip-value">Web3, Full Stack, Crypto</div>
+    </div>
+    <div class="strip-item">
+      <div class="strip-label">Response time</div>
+      <div class="strip-value">Within 24 hours</div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Borypitou &mdash; Pitou_OP &copy; 2025</span>
+    <span>Phnom Penh, Cambodia</span>
+  </footer>
+</div>
+
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  class P {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random()*W; this.y = Math.random()*H;
+      this.r = Math.random()*1.2+0.3;
+      this.vx = (Math.random()-0.5)*0.3; this.vy = (Math.random()-0.5)*0.3;
+      this.a = Math.random()*0.35+0.05;
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy;
+      if (this.x<0||this.x>W||this.y<0||this.y>H) this.reset();
+    }
+    draw() {
+      ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(184,134,11,${this.a})`; ctx.fill();
+    }
+  }
+  for (let i=0;i<80;i++) particles.push(new P());
+  function loop() {
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{p.update();p.draw();});
+    for (let i=0;i<particles.length;i++) for (let j=i+1;j<particles.length;j++) {
+      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if (d<120) {
+        ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y);
+        ctx.strokeStyle=`rgba(184,134,11,${0.07*(1-d/120)})`; ctx.lineWidth=0.5; ctx.stroke();
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  const obs = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('v');}),{threshold:0.08});
+  document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
